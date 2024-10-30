@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -42,11 +41,11 @@ public class Main {
 				BikeEntry bike = splitString(line);
 				bikes.add(bike);
 				String day = Integer.toString(bike.getSeason()) + "," +
-				Integer.toString(bike.getMonth()) + ","
-				+ Integer.toString(bike.getWeekday()) + "," + Boolean.toString(bike.isHoliday());
+						Integer.toString(bike.getMonth()) + ","
+						+ Integer.toString(bike.getWeekday()) + "," + Boolean.toString(bike.isHoliday());
 				// String day = Utilities.toSeason(bike.getSeason())
-				// 		+ Utilities.toMonth(bike.getMonth())
-				// 		+ weekday(bike.getWeekday());
+				// + Utilities.toMonth(bike.getMonth())
+				// + weekday(bike.getWeekday());
 				int totalCycle = bike.getCasual() + bike.getRegistered();
 				if (mostCyclists.get(day) == null) {
 					mostCyclists.put(day, totalCycle);
@@ -68,50 +67,60 @@ public class Main {
 			LinkedHashMap<String, Integer> sortedBikes = sortHashMapByValues(mostCyclists);
 			List<String> topFive = new ArrayList<String>(sortedBikes.keySet());
 			Collections.reverse(topFive);
-			for (int i = 0; i < 5; i ++){
+			for (int i = 0; i < 5; i++) {
 				String[] parts = topFive.get(i).split(",");
 				int total = sortedBikes.get(topFive.get(i));
-				String season =Utilities.toSeason(Integer.valueOf(parts[0]));
-				String month =Utilities.toMonth(Integer.valueOf(parts[1]));
-				String day =Utilities.toWeekday(Integer.valueOf(parts[2]));
+				String season = Utilities.toSeason(Integer.valueOf(parts[0]));
+				String month = Utilities.toMonth(Integer.valueOf(parts[1]));
+				String day = Utilities.toWeekday(Integer.valueOf(parts[2]));
 				Boolean isHoliday = Boolean.valueOf(parts[3]);
 				String holiday = "";
-				if (isHoliday){
+				if (isHoliday) {
 					holiday = "a holiday";
-				} else{
+				} else {
 					holiday = "not a holiday";
 				}
 				int weather = 0;
-				for (BikeEntry bike : bikes){
+				for (BikeEntry bike : bikes) {
 					String newline = Integer.toString(bike.getSeason()) + "," +
-					Integer.toString(bike.getMonth()) + ","
-					+ Integer.toString(bike.getWeekday()) + "," + Boolean.toString(bike.isHoliday());
-					if (newline.equalsIgnoreCase(topFive.get(i))){
+							Integer.toString(bike.getMonth()) + ","
+							+ Integer.toString(bike.getWeekday()) + "," + Boolean.toString(bike.isHoliday());
+					if (newline.equalsIgnoreCase(topFive.get(i))) {
 						weather = bike.getWeather();
 						System.out.println(weather);
 						break;
 					}
 				}
 				String weatherSit = "";
-				if (weather == 1){
+				if (weather == 1) {
 					weatherSit = "Clear, Few clouds, Partly cloudy, Partly cloudy";
-				} else if (weather == 2){
+				} else if (weather == 2) {
 					weatherSit = "Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist";
-				} else if (weather == 3){
+				} else if (weather == 3) {
 					weatherSit = "Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds";
-				} else if (weather == 4){
+				} else if (weather == 4) {
 					weatherSit = "Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog";
 				}
-				if (i == 0){
-					System.out.printf("The highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month );
-				} else if (i == 1){
-					System.out.printf("The second highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month  );
-				} else if (i == 2){
-					System.out.printf("The third highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month  );
-				}else if (i == 3){
-					System.out.printf("The fourth highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month  );
-				} else if (i == 4){
-					System.out.printf("The fifth highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month  );
+				if (i == 0) {
+					System.out.printf(
+							"The highest recorded number of cyclists was in %s, on a %s in the month of %s.\n", season,
+							day, month);
+				} else if (i == 1) {
+					System.out.printf(
+							"The second highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",
+							season, day, month);
+				} else if (i == 2) {
+					System.out.printf(
+							"The third highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",
+							season, day, month);
+				} else if (i == 3) {
+					System.out.printf(
+							"The fourth highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",
+							season, day, month);
+				} else if (i == 4) {
+					System.out.printf(
+							"The fifth highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",
+							season, day, month);
 				}
 				System.out.printf("There were a total of %d cyclists.", total);
 				System.out.printf("The weather was %s.\n", weatherSit);
@@ -129,7 +138,7 @@ public class Main {
 
 			// }
 			System.out.println("The total count is " + count + " Checksum: " + check);
-
+			br.close();
 		}
 	}
 
