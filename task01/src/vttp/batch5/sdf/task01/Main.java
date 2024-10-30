@@ -18,13 +18,15 @@ import vttp.batch5.sdf.task01.models.BikeEntry;
 
 public class Main {
 
+	public static final String[] DAY = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+
 	public static void main(String[] args) throws IOException {
 
 		// System.out.printf("hello, world\n");
 		String csvName = "day.csv";
 		File file = new File(csvName);
-		System.out.println(file.getAbsolutePath());
-		System.out.println(file.getName());
+		// System.out.println(file.getAbsolutePath());
+		// System.out.println(file.getName());
 		if (!file.exists()) {
 			System.out.println("File doesn't exist in directory");
 		} else {
@@ -39,13 +41,18 @@ public class Main {
 				count++;
 				BikeEntry bike = splitString(line);
 				bikes.add(bike);
-				String day = Integer.toString(bike.getSeason()) + Integer.toString(bike.getMonth())
-						+ Integer.toString(bike.getWeekday());
+				String day = Integer.toString(bike.getSeason()) + "," +
+				Integer.toString(bike.getMonth()) + ","
+				+ Integer.toString(bike.getWeekday()) + "," + Boolean.toString(bike.isHoliday());
+				// String day = Utilities.toSeason(bike.getSeason())
+				// 		+ Utilities.toMonth(bike.getMonth())
+				// 		+ weekday(bike.getWeekday());
+				int totalCycle = bike.getCasual() + bike.getRegistered();
 				if (mostCyclists.get(day) == null) {
-					mostCyclists.put(day, 1);
-				} else if (mostCyclists.get(day) > 0) {
+					mostCyclists.put(day, totalCycle);
+				} else if (mostCyclists.get(day) != null) {
 					int dayCount = mostCyclists.get(day);
-					dayCount += 1;
+					dayCount += totalCycle;
 					mostCyclists.replace(day, dayCount);
 				}
 				// if (count == 10){
@@ -55,13 +62,61 @@ public class Main {
 
 			int check = 0;
 			// for (String item : mostCyclists.keySet()) {
-			// 	System.out.println(item + ": " + mostCyclists.get(item));
-			// 	check += mostCyclists.get(item);
+			// System.out.println(item + ": " + mostCyclists.get(item));
+			// check += mostCyclists.get(item);
 			// }
 			LinkedHashMap<String, Integer> sortedBikes = sortHashMapByValues(mostCyclists);
-			for (String item : sortedBikes.keySet()) {
-				System.out.println(item + ": " + sortedBikes.get(item));
-				check += sortedBikes.get(item);
+			List<String> topFive = new ArrayList<String>(sortedBikes.keySet());
+			Collections.reverse(topFive);
+			for (int i = 0; i < 5; i ++){
+				String[] parts = topFive.get(i).split(",");
+				int total = sortedBikes.get(topFive.get(i));
+				String season =Utilities.toSeason(Integer.valueOf(parts[0]));
+				String month =Utilities.toMonth(Integer.valueOf(parts[1]));
+				String day =Utilities.toWeekday(Integer.valueOf(parts[2]));
+				Boolean isHoliday = Boolean.valueOf(parts[3]);
+				String holiday = "";
+				if (isHoliday){
+					holiday = "a holiday";
+				} else{
+					holiday = "not a holiday";
+				}
+				int weather = 0;
+				for (BikeEntry bike : bikes){
+					String newline = Integer.toString(bike.getSeason()) + "," +
+					Integer.toString(bike.getMonth()) + ","
+					+ Integer.toString(bike.getWeekday()) + "," + Boolean.toString(bike.isHoliday());
+					if (newline.equalsIgnoreCase(topFive.get(i))){
+						weather = bike.getWeather();
+						System.out.println(weather);
+						break;
+					}
+				}
+				String weatherSit = "";
+				if (weather == 1){
+					weatherSit = "Clear, Few clouds, Partly cloudy, Partly cloudy";
+				} else if (weather == 2){
+					weatherSit = "Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist";
+				} else if (weather == 3){
+					weatherSit = "Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds";
+				} else if (weather == 4){
+					weatherSit = "Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog";
+				}
+				if (i == 0){
+					System.out.printf("The highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month );
+				} else if (i == 1){
+					System.out.printf("The second highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month  );
+				} else if (i == 2){
+					System.out.printf("The third highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month  );
+				}else if (i == 3){
+					System.out.printf("The fourth highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month  );
+				} else if (i == 4){
+					System.out.printf("The fifth highest recorded number of cyclists was in %s, on a %s in the month of %s.\n",season, day, month  );
+				}
+				System.out.printf("There were a total of %d cyclists.", total);
+				System.out.printf("The weather was %s.\n", weatherSit);
+				System.out.printf("The day was %s.\n", holiday);
+				System.out.println();
 			}
 
 			// for (BikeEntry bike : bikes){
@@ -105,33 +160,48 @@ public class Main {
 		return newBike;
 
 	}
+
 	public static LinkedHashMap<String, Integer> sortHashMapByValues(
-        HashMap<String, Integer> passedMap) {
-    List<String> mapKeys = new ArrayList<>(passedMap.keySet());
-    List<Integer> mapValues = new ArrayList<>(passedMap.values());
-    Collections.sort(mapValues);
-    Collections.sort(mapKeys);
+			HashMap<String, Integer> passedMap) {
+		List<String> mapKeys = new ArrayList<>(passedMap.keySet());
+		List<Integer> mapValues = new ArrayList<>(passedMap.values());
+		Collections.sort(mapValues);
+		Collections.sort(mapKeys);
 
-    LinkedHashMap<String, Integer> sortedMap =
-        new LinkedHashMap<>();
+		LinkedHashMap<String, Integer> sortedMap = new LinkedHashMap<>();
 
-    Iterator<Integer> valueIt = mapValues.iterator();
-    while (valueIt.hasNext()) {
-        Integer val = valueIt.next();
-        Iterator<String> keyIt = mapKeys.iterator();
+		Iterator<Integer> valueIt = mapValues.iterator();
+		while (valueIt.hasNext()) {
+			Integer val = valueIt.next();
+			Iterator<String> keyIt = mapKeys.iterator();
 
-        while (keyIt.hasNext()) {
-            String key = keyIt.next();
-            Integer comp1 = passedMap.get(key);
-            Integer comp2 = val;
+			while (keyIt.hasNext()) {
+				String key = keyIt.next();
+				Integer comp1 = passedMap.get(key);
+				Integer comp2 = val;
 
-            if (comp1.equals(comp2)) {
-                keyIt.remove();
-                sortedMap.put(key, val);
-                break;
-            }
-        }
-    }
-    return sortedMap;
-}
+				if (comp1.equals(comp2)) {
+					keyIt.remove();
+					sortedMap.put(key, val);
+					break;
+				}
+			}
+		}
+		return sortedMap;
+	}
+
+	public static String weekday(int weekday) {
+		switch (weekday) {
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+				return DAY[weekday];
+			default:
+				return "incorrect day";
+		}
+	}
 }
