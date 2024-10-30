@@ -59,11 +59,6 @@ public class Main {
 				// }
 			}
 
-			int check = 0;
-			// for (String item : mostCyclists.keySet()) {
-			// System.out.println(item + ": " + mostCyclists.get(item));
-			// check += mostCyclists.get(item);
-			// }
 			LinkedHashMap<String, Integer> sortedBikes = sortHashMapByValues(mostCyclists);
 			List<String> topFive = new ArrayList<String>(sortedBikes.keySet());
 			Collections.reverse(topFive);
@@ -87,7 +82,6 @@ public class Main {
 							+ Integer.toString(bike.getWeekday()) + "," + Boolean.toString(bike.isHoliday());
 					if (newline.equalsIgnoreCase(topFive.get(i))) {
 						weather = bike.getWeather();
-						System.out.println(weather);
 						break;
 					}
 				}
@@ -135,9 +129,7 @@ public class Main {
 			// Temperature: " + bike.getTemperature() + " Humidity: "+ bike.getHumidity() +
 			// " Windspeed" + bike.getWindspeed() + "Casual: " + bike.getCasual() + "
 			// Registered: "+ bike.getRegistered());
-
 			// }
-			System.out.println("The total count is " + count + " Checksum: " + check);
 			br.close();
 		}
 	}
@@ -169,8 +161,8 @@ public class Main {
 		return newBike;
 
 	}
-
-	public static LinkedHashMap<String, Integer> sortHashMapByValues(
+	//sort hashmap in ascending order
+	public static LinkedHashMap<String, Integer> sortHashMapByValues( 
 			HashMap<String, Integer> passedMap) {
 		List<String> mapKeys = new ArrayList<>(passedMap.keySet());
 		List<Integer> mapValues = new ArrayList<>(passedMap.values());
