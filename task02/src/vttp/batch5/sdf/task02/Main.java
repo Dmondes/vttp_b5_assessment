@@ -26,8 +26,8 @@ public class Main {
 
 			FileReader reader = new FileReader(file);
 			BufferedReader br = new BufferedReader(reader);
-			char[][] board = new char[3][3];
-			ArrayList<String> legalMoves = new ArrayList<>();
+			char[][] board = new char[3][3]; //board size
+			ArrayList<String> legalMoves = new ArrayList<>(); //to store legal positions and utility
 			String line = "";
 			for (int i = 0; i < 3; i++) {
 				line = br.readLine();
@@ -35,8 +35,6 @@ public class Main {
 					board[i][j] = line.charAt(j);
 				}
 			}
-			System.out.println("Processing: " + boardName);
-			// printBoard(board);
 			int point = 0;
 			String lineToAdd = "";
 			for (int x = 0; x < 3; x++) {
@@ -46,8 +44,11 @@ public class Main {
 						point = checkWin(board);
 						if (point == 1) {
 							lineToAdd = "y = " + y + ", x = " + x + ", ulility = " + point;
-							legalMoves.add(lineToAdd);
+							if (!legalMoves.contains(lineToAdd)){ //prevents duplicates
+								legalMoves.add(lineToAdd);
+							}
 						} else {
+							boolean cpuWin = false; 
 							for (int cx = 0; cx < 3; cx++) {
 								for (int cy = 0; cy < 3; cy++) {
 									if (board[cx][cy] == '.') {
@@ -55,10 +56,19 @@ public class Main {
 										point = checkWin(board);
 										if (point == -1) {
 											lineToAdd = "y = " + y + ", x = " + x + ", ulility = " + point;
-											legalMoves.add(lineToAdd);
+											if (!legalMoves.contains(lineToAdd)){
+												legalMoves.add(lineToAdd);
+											}
+											cpuWin = true;
 										}
 										board[cx][cy] = '.';
 									}
+								}
+							}
+							if (cpuWin == false) { //tie game
+								lineToAdd = "y = " + y + ", x = " + x + ", ulility = " + 0;
+								if (!legalMoves.contains(lineToAdd)){
+									legalMoves.add(lineToAdd);
 								}
 							}
 						}
@@ -66,23 +76,14 @@ public class Main {
 					}
 				}
 			}
-			for (String item : legalMoves) {
+			br.close();
+			System.out.println("Processing: " + boardName); // show txt file
+			printBoard(board); //output board
+			for (String item : legalMoves) { //output all legal moves
 				System.out.println(item);
 			}
 		}
 
-	}
-
-	public static int tryMove(char[][] board) {
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				if (board[x][y] == '.') {
-					board[x][y] = opponent;
-					return checkWin(board);
-				}
-			}
-		}
-		return 0;
 	}
 
 	public static void printBoard(char[][] board) {
